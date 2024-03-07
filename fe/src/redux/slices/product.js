@@ -162,7 +162,7 @@ export function GetProductById(id) {
   };
 }
 
-export function DeleteProduct(id) {
+export function DeleteProduct(id,setIsDelete) {
   return async (dispatch, getState) => { 
     const token = getState().auth.token;
     await axios
@@ -177,17 +177,18 @@ export function DeleteProduct(id) {
           ShowSnackbar({ severity: "success", message: "Xoá Thành Công" })
         );
 
-        const products = getState().product.products.filter(
-          (item) => item.id !== id
-        );
+        setIsDelete(a=>!a)
+        // const products = getState().product.products.filter(
+        //   (item) => item.id !== id
+        // );
 
-        dispatch(
-          slice.actions.setProducts({
-            products: products,
-          })
-        );
+        // dispatch(
+        //   slice.actions.setProducts({
+        //     products: products,
+        //   })
+        // );
 
-        console.log("categorý :", products);
+        // console.log("categorý :", products);
       })
       .catch(function (error) {
         console.log("login error : ", error);

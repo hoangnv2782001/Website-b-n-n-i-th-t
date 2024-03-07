@@ -174,7 +174,7 @@ export default function Header() {
                 }}
                 onMouseOver={(e) => {
                   console.log("ngan chan sư kien", e);
-                  if (e.target.className.includes("MuiBackdrop-root"))
+                  if (e?.target?.className?.includes("MuiBackdrop-root"))
                     e.stopPropagation();
                 }}
                 id={"basic-menu"}

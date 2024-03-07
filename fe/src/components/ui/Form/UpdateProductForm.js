@@ -28,6 +28,8 @@ import { AddProduct, UpdateProduct } from "../../../redux/slices/product";
 import RHFAutocomplete from "../TextField/RHFAutocomplete";
 import { useEffect } from "react";
 const UpdateProductForm = ({ singleProduct, categorys }) => {
+
+  console.log("product single",singleProduct)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [value, setValue] = useState(singleProduct.description);
@@ -37,17 +39,17 @@ const UpdateProductForm = ({ singleProduct, categorys }) => {
   const ProductSchema = Yup.object().shape({
     name: Yup.string().required("Vui lòng nhập tên"),
     price: Yup.number()
-      .required("Vui lòng nhap Gia")
-      .min(1, "Vui long nhap lon hon 0"),
+      .required("Vui lòng nhập giá")
+      .min(1, "Vui lòng nhập lớn hơn 0"),
     quantity: Yup.number()
-      .required("Vui lòng nhập so luong")
-      .min(1, "Vui long nhap lon hon 0"),
+      .required("Vui lòng nhập số lượng")
+      .min(1, "Vui lòng nhập lớn hơn 0"),
     mass: Yup.number()
       .required("Vui lòng nhập khoi luong")
-      .min(1, "Vui long nhap lon hon 0"),
+      .min(1, "Vui lòng nhập lớn hơn 0"),
 
     // description: Yup.string().required("Vui lòng nhập mo ta"),
-    category: Yup.number().required("Vui lòng chon danh muc"),
+    category: Yup.number().required("Vui lòng chọn danh mục"),
     // img: Yup.mixed()
     //   .test(
     //     "fileType",
@@ -184,8 +186,9 @@ const UpdateProductForm = ({ singleProduct, categorys }) => {
             name="category"
             label="Danh Muc"
             defaultValue={singleProduct.category}
-            category={categorys}
-            options={categorys.map((option) => option.name)}
+            // category={categorys}
+            options={categorys}
+            getOptionLabel = {(option)=>option.name}
             ChipProps={{ size: "medium" }}
           />
           {!isLoading && !img ? (

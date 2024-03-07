@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import UpdateProductForm from "../../../components/ui/Form/UpdateProductForm";
 import { useParams } from "react-router-dom";
@@ -8,18 +8,36 @@ import { GetProductById } from "../../../redux/slices/product";
 
 import LoadingScreen from "../../ui/LoadingScreen";
 import { GetAllCategorys } from "../../../redux/slices/category";
+import { getProduct } from "../../../service/productService";
 
 const UpdateProduct = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { singleProduct } = useSelector((state) => state.product);
+  // const { singleProduct } = useSelector((state) => state.product);
   const { categorys } = useSelector((state) => state.category);
 
+  const [product, setProduct] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+
+  console.log("update product")
   useEffect(() => {
-    dispatch(GetProductById(id));
+
+    console.log("get product")
+    getProduct(id)
+      .then((response) => {
+        console.log("response", response)
+        setProduct(response.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("error",err);
+        setLoading(false);
+      });
     dispatch(GetAllCategorys());
-   
-  },[]);
+  }, [id]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Box sx={{ width: "100%", marginTop: 3 }}>
@@ -31,11 +49,7 @@ const UpdateProduct = () => {
         sx={{ width: "100%", backgroundColor: "#fff" }}
         justifyContent={"center"}
       >
-        {!singleProduct || !categorys ? (
-          <LoadingScreen />
-        ) : (
-          <UpdateProductForm singleProduct={singleProduct} categorys={categorys} />
-        )}
+        <UpdateProductForm singleProduct={product} categorys={categorys} />
       </Stack>
     </Box>
   );

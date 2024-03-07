@@ -17,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.be.dto.request.ProductDto;
 import com.project.be.dto.response.ProductResponse;
+import com.project.be.dto.response.CategoryResponse;
 import com.project.be.dto.response.Message;
 import com.project.be.dto.response.PageResponse;
+import com.project.be.dto.response.ProductCategory;
 import com.project.be.exception.ResourceNotFoundException;
 import com.project.be.model.Category;
 import com.project.be.model.OrderItem;
@@ -44,8 +46,9 @@ public class ProductServiceImpl implements ProductService {
 		});
 
 		ProductResponse response = ProductResponse.builder().id(c.getId()).name(c.getName()).active(c.isActive())
-				.description(c.getDescription()).img(c.getImg()).category(c.getCategory().getName()).mass(c.getMass())
-				.categoryId(c.getCategory().getId()).quantity(c.getQuantity()).price(c.getPrice())
+				.description(c.getDescription()).img(c.getImg())
+				.category(ProductCategory.builder().id(c.getCategory().getId()).name(c.getCategory().getName()).build())
+				.mass(c.getMass()).quantity(c.getQuantity()).price(c.getPrice())
 				.createdDate(c.getCreatedDate().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy"))).build();
 		return response;
 	}
@@ -54,13 +57,12 @@ public class ProductServiceImpl implements ProductService {
 	public List<ProductResponse> getAllProduct(int page, int size) {
 		List<Product> product = productRepository.findByActiveTrue(PageRequest.of(page - 1, size)).getContent().get(0);
 
-		List<ProductResponse> response = product.stream()
-				.map(c -> ProductResponse.builder().id(c.getId()).name(c.getName()).active(c.isActive())
-						.description(c.getDescription()).img(c.getImg()).category(c.getCategory().getName())
-						.mass(c.getMass()).quantity(c.getQuantity()).price(c.getPrice())
-						.createdDate(c.getCreatedDate().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")))
-						.build())
-				.collect(Collectors.toList());
+		List<ProductResponse> response = product.stream().map(c -> ProductResponse.builder().id(c.getId())
+				.name(c.getName()).active(c.isActive()).description(c.getDescription()).img(c.getImg())
+				.mass(c.getMass()).quantity(c.getQuantity()).price(c.getPrice())
+				.createdDate(c.getCreatedDate().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")))
+				.category(ProductCategory.builder().id(c.getCategory().getId()).name(c.getCategory().getName()).build())
+				.build()).collect(Collectors.toList());
 
 		return response;
 	}
@@ -113,34 +115,35 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public PageResponse searchProduct(String param,int page,int size,String[] sort){
-		
+	public PageResponse searchProduct(String param, int page, int size, String[] sort) {
+
 		Sort s = null;
-		logger.info("sort by {}",sort);
-        
-		if(sort.length >= 2) {
-			if(sort[1].equals("asc"))
+		logger.info("sort by {}", sort);
+
+		if (sort.length >= 2) {
+			if (sort[1].equals("asc"))
 				s = Sort.by(sort[0]).ascending();
 			else
 				s = Sort.by(sort[0]).descending();
-		}else {
+		} else {
 			s = Sort.by("id").ascending();
 		}
-		
-		Pageable pageable = PageRequest.of(page-1, size, s);
-		Page productPage = productRepository.searchByName(param,pageable);
-		
+
+		Pageable pageable = PageRequest.of(page - 1, size, s);
+		Page productPage = productRepository.searchByName(param, pageable);
+
 		List<Product> products = productPage.getContent();
 
 		List<ProductResponse> response = products.stream()
 				.map(c -> ProductResponse.builder().id(c.getId()).name(c.getName()).active(c.isActive())
-						.description(c.getDescription()).img(c.getImg()).category(c.getCategory().getName())
+						.description(c.getDescription()).img(c.getImg()).category(ProductCategory.builder().id(c.getCategory().getId()).name(c.getCategory().getName()).build())
 						.mass(c.getMass()).quantity(c.getQuantity()).price(c.getPrice())
 						.createdDate(c.getCreatedDate().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")))
 						.build())
 				.collect(Collectors.toList());
 
-		return PageResponse.builder().data(response).totalElements(productPage.getTotalElements()).totalPages(productPage.getTotalPages()).build();
+		return PageResponse.builder().data(response).totalElements(productPage.getTotalElements())
+				.totalPages(productPage.getTotalPages()).build();
 	}
 
 	@Override
@@ -154,35 +157,36 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public PageResponse getProductByCategory(int id,int page,int size, String[] sort) {
+	public PageResponse getProductByCategory(int id, int page, int size, String[] sort) {
 		Sort s = null;
-		logger.info("sort by {}",sort);
-        
-		if(sort.length >= 2) {
-			if(sort[1].equals("asc"))
+		logger.info("sort by {}", sort);
+
+		if (sort.length >= 2) {
+			if (sort[1].equals("asc"))
 				s = Sort.by(sort[0]).ascending();
 			else
 				s = Sort.by(sort[0]).descending();
-		}else {
+		} else {
 			s = Sort.by("id").ascending();
 		}
-		
-		Pageable pageable = PageRequest.of(page-1, size, s);
+
+		Pageable pageable = PageRequest.of(page - 1, size, s);
 
 		Page<Product> productPage = productRepository.findByCategoryIdAndActiveTrue(id, pageable);
-		
+
 		List<Product> products = productPage.getContent();
 
 		List<ProductResponse> response = products.stream()
 				.map(c -> ProductResponse.builder().id(c.getId()).name(c.getName()).active(c.isActive())
-						.description(c.getDescription()).img(c.getImg()).category(c.getCategory().getName())
+						.description(c.getDescription()).img(c.getImg())
 						.mass(c.getMass()).quantity(c.getQuantity()).price(c.getPrice())
-						.category(c.getCategory().getName()).categoryId(c.getCategory().getId())
+						.category(ProductCategory.builder().id(c.getCategory().getId()).name(c.getCategory().getName()).build())
 						.createdDate(c.getCreatedDate().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")))
 						.build())
 				.collect(Collectors.toList());
 
-		return PageResponse.builder().data(response).totalElements(productPage.getTotalElements()).totalPages(productPage.getTotalPages()).build();
+		return PageResponse.builder().data(response).totalElements(productPage.getTotalElements())
+				.totalPages(productPage.getTotalPages()).build();
 	}
 
 	@Override
@@ -195,9 +199,9 @@ public class ProductServiceImpl implements ProductService {
 
 		List<ProductResponse> response = products.stream()
 				.map(c -> ProductResponse.builder().id(c.getId()).name(c.getName()).active(c.isActive())
-						.description(c.getDescription()).img(c.getImg()).category(c.getCategory().getName())
+						.description(c.getDescription()).img(c.getImg())
 						.mass(c.getMass()).quantity(c.getQuantity()).price(c.getPrice())
-						.category(c.getCategory().getName()).categoryId(c.getCategory().getId())
+						.category(ProductCategory.builder().id(c.getCategory().getId()).name(c.getCategory().getName()).build())
 						.createdDate(c.getCreatedDate().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")))
 						.build())
 				.collect(Collectors.toList());

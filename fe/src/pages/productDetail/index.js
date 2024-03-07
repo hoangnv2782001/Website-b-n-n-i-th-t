@@ -77,7 +77,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     if (product) {
-      getProductsByCategory(product.categoryId)
+      getProductsByCategory(product.category?.id)
         .then((response) => {
           console.log("product relat", response);
           setProductRelated(response.data.data);
@@ -121,11 +121,11 @@ const ProductDetail = () => {
           <Typography
             sx={{ cursor: "pointer" }}
             onClick={() => {
-              navigate(`/category/${product.categoryId}`);
+              navigate(`/category/${product.category?.id}`);
             }}
           >
             {" "}
-            {product.category}
+            {product.category?.name}
           </Typography>
         )}
         <CaretRight />
@@ -161,7 +161,7 @@ const ProductDetail = () => {
                   </Typography>
 
                   <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
-                    Danh Mục: {product.category}
+                    Danh Mục: {product.category?.name}
                   </Typography>
 
                   <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>

@@ -12,11 +12,15 @@ RHFAutocomplete.prototype = {
 };
 export default function RHFAutocomplete({ name, label, helperText, ...other }) {
   const { control, setValue } = useFormContext();
+
+  // const category = other.category.find((e) => e.name === other.defaultValue.id)
+
+  // console.log("category update",other.category,other.defaultValue)
   useEffect(() => {
     if (other.defaultValue) {
       setValue(
         name,
-        other.category.find((e) => e.name === other.defaultValue)?.id,
+        other.defaultValue.id,
         { shouldValidate: true }
       );
     }

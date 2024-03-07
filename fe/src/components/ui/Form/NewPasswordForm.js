@@ -17,7 +17,6 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { NewPassword } from "../../../redux/slices/auth";
 
-
 const NewPasswordForm = () => {
   const [showPassword, setShowPassword] = useState();
   const [showPassword1, setShowPassword1] = useState();
@@ -50,7 +49,7 @@ const NewPasswordForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      dispatch(NewPassword({ ...data, token },navigate));
+      dispatch(NewPassword({ ...data, token }, navigate));
     } catch (error) {
       console.log(error);
       reset();
@@ -85,7 +84,7 @@ const NewPasswordForm = () => {
               <InputAdornment>
                 <IconButton
                   onClick={() => {
-                    setShowPassword1((state) => !state);
+                    setShowPassword((state) => !state);
                   }}
                 >
                   {showPassword ? <Eye /> : <EyeSlash />}
@@ -105,7 +104,7 @@ const NewPasswordForm = () => {
               <InputAdornment>
                 <IconButton
                   onClick={() => {
-                    setShowPassword((state) => !state);
+                    setShowPassword1((state) => !state);
                   }}
                 >
                   {showPassword1 ? <Eye /> : <EyeSlash />}
@@ -121,8 +120,15 @@ const NewPasswordForm = () => {
           size="large"
           type="submit"
           sx={{
-            bgcolor: "#000",
-           
+            bgcolor: "text.primary",
+            color: (theme) =>
+              theme.palette.mode === "light" ? "common.white" : "grey.800",
+
+            "&:hover": {
+              bgcolor: "text.primary",
+              color: (theme) =>
+                theme.palette.mode === "light" ? "common.white" : "grey.800",
+            },
           }}
         >
           Xác nhận

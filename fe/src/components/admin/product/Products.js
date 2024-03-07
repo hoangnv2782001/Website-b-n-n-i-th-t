@@ -190,8 +190,8 @@ const Products = () => {
                                       onClick={() => {
                                         console.log("open dialog");
                                         const handleDelete = () => {
-                                          dispatch(DeleteProduct(row.id));
-                                          setIsDelete(!isDelete);
+                                          dispatch(DeleteProduct(row.id,setIsDelete));
+                                          // setIsDelete(isDelete=>!isDelete);
 
                                           // dispatch(DeleteCart(item));
                                           dispatch(CloseDeleteDialog());
@@ -222,7 +222,7 @@ const Products = () => {
                                 </TableCell>
                               );
                             else {
-                              let value = row[column.id];
+                              let value = column.id === 'category'? row[column.id].name  :  row[column.id];
                               if (column.id === "img")
                                 return (
                                   <TableCell key={value}>

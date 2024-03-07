@@ -22,10 +22,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	@Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) and p.active = true")
 	Page searchByName(@Param("keyword") String keyword,Pageable pageable);
 	
-	@Query("SELECT p FROM Product p ORDER BY p.id DESC")
+	@Query("SELECT p FROM Product p WHERE p.active = true ORDER BY p.id DESC")
 	Page<Product> getProductsNew(Pageable page);
 	
-	@Query("SELECT p FROM Product p ORDER BY p.sale DESC")
+	@Query("SELECT p FROM Product p WHERE p.active = true ORDER BY p.sale DESC")
 	Page<Product> getProductsSale(Pageable page);
 
 	@Query("SELECT COUNT(p) FROM Product p WHERE p.active = true")

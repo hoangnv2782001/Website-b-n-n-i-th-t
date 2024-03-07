@@ -12,7 +12,7 @@ const NewPassword = () => {
   return (
     <>
       <Stack spacing={2} sx={{ mb: 5, position: "relative" }}>
-        <Typography variant="h3">Thay đỏi mật khẩu</Typography>
+        <Typography variant="h3">Thay đổi mật khẩu</Typography>
 
         <Typography sx={{ color: "text.secondary", mb: 5 }}>
          Vui lòng nhập mật khẩu mới của bạn

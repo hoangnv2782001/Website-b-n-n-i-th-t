@@ -37,7 +37,5 @@ public class ProductResponse {
 
 	private String createdDate;
 
-	private String category;
-	
-	private int categoryId;
+	private ProductCategory category;
 }

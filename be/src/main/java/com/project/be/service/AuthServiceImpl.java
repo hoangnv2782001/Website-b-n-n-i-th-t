@@ -52,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
 	private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 	private final RedisTemplate redisTemplate;
 
-
 	/**
 	 * Bussiness bao gồm : check exits email genarator otp gửi email xác thực otp
 	 * cập nhật thông tin user mới cvào csdl genarate jwt Excepption throw
@@ -69,13 +68,11 @@ public class AuthServiceImpl implements AuthService {
 		String otp = emailService.sendEmailOtp(registerDto.getEmail());
 
 		logger.info("otp : {}", otp);
-		redisTemplate.opsForValue().set(registerDto.getEmail(), otp,Constants.OTP_DURATION,TimeUnit.MINUTES);
-
-	
+		redisTemplate.opsForValue().set(registerDto.getEmail(), otp, Constants.OTP_DURATION, TimeUnit.MINUTES);
 
 		User user = User.builder().name(registerDto.getName()).email(registerDto.getEmail())
 				.password(passwordEncoder.encode(registerDto.getPassword())).enable(false)
-				
+
 				.role(Role.USER).build();
 		userRepository.save(user);
 
@@ -114,11 +111,11 @@ public class AuthServiceImpl implements AuthService {
 
 		try {
 			token = redisTemplate.opsForValue().get(veInfo.getEmail()).toString();
-		}catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Verify account fail");
 			throw new OTPException("OTP was expired");
 		}
-		if(!token.equals(veInfo.getOtp())) {
+		if (!token.equals(veInfo.getOtp())) {
 			throw new OTPException("OTP is invalid");
 		}
 
@@ -146,9 +143,7 @@ public class AuthServiceImpl implements AuthService {
 
 		String token = emailService.sendEmailResetPassword(email);
 
-		LocalDateTime dateExpiration = LocalDateTime.now().plusSeconds(Constants.TOKEN_RESET_PASSWORD_DURATION);
-
-		userRepository.save(user);
+		redisTemplate.opsForValue().set(token, user, Constants.TOKEN_RESET_PASSWORD_DURATION, TimeUnit.SECONDS);
 
 		return Message.builder().httpStatus("200").message("Reset password link sent to email").build();
 	}
@@ -156,16 +151,17 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public AuthResponse resetPassword(PasswordDto passwordDto) {
 		try {
-			User user =(User) redisTemplate.opsForValue().get(passwordDto.getToken());
-			logger.info("user reset pass {}",user);
+			User user = (User) redisTemplate.opsForValue().get(passwordDto.getToken());
+			logger.info("user reset pass {}", user);
 			user.setPassword(passwordEncoder.encode(passwordDto.getPassword()));
-            redisTemplate.delete(passwordDto.getToken());
+			redisTemplate.delete(passwordDto.getToken());
 			userRepository.save(user);
 
 			String jwtToken = jwtTokenProvider.genarateToken(user);
 
 			return AuthResponse.builder().token(jwtToken).build();
-		}catch(Exception e) {
+		} catch (Exception e) {
+			logger.error("token error {}", passwordDto.getToken());
 			throw new UsernameNotFoundException("Token is invalid");
 		}
 	}

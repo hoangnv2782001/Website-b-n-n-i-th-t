@@ -156,6 +156,7 @@ const NewProductForm = ({ categorys }) => {
             name="category"
             label="Danh Muc"
             options={categorys}
+            
             getOptionLabel={(option) => option.name}
             ChipProps={{ size: "medium" }}
           />

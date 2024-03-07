@@ -39,11 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	 */
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
 									@NonNull FilterChain filterChain) throws ServletException, IOException {
-		
-		logger.info("User request {}",request.getLocalName());
-		
-		logger.info("Thread name :{}",Thread.currentThread().getName());
-
 		final String authHeader = request.getHeader("Authorization");
 		final String jwt;
 		final String username;

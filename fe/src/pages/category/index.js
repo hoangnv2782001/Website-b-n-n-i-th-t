@@ -90,7 +90,7 @@ const Category = () => {
           {"Trang chủ"}
         </Typography>
         <CaretRight />
-        <Typography>{products[0].category}</Typography>
+        <Typography>{products[0].category?.name}</Typography>
       </Stack>
 
       <Autocomplete

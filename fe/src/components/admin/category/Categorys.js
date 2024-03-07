@@ -181,8 +181,8 @@ const Categorys = () => {
                                       onClick={() => {
                                         console.log("open dialog");
                                         const handleDelete = () => {
-                                          dispatch(DeleteCategory(row.id));
-                                          setIsDelete(!isDelete);
+                                          dispatch(DeleteCategory(row.id,setIsDelete));
+                                          // setIsDelete(isDelete=>!isDelete);
 
                                           // dispatch(DeleteCart(item));
                                           dispatch(CloseDeleteDialog());
